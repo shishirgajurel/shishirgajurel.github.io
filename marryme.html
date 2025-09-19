@@ -125,7 +125,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Will You Marry Me?</h1>
+        <h1>Will You Marry Me Punturi?</h1>
         <p>My Punti, I've loved you from the moment we met. You make every day brighter and my heart fuller. Will you make me the happiest person in the world?</p>
         
         <div class="buttons">
@@ -140,7 +140,7 @@
             const container = document.querySelector('.container');
             const yesButton = document.getElementById('yesButton');
             
-            // Function to create floating hearts
+       
             function createHeart() {
                 const heart = document.createElement('div');
                 heart.classList.add('heart');
@@ -149,13 +149,13 @@
                 heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
                 document.body.appendChild(heart);
                 
-                // Remove heart after animation completes
+             
                 setTimeout(() => {
                     heart.remove();
                 }, 3000);
             }
             
-            // Create hearts periodically
+       
             setInterval(createHeart, 300);
             
             noButton.addEventListener('mouseover', function() {
@@ -176,22 +176,21 @@
                 const containerRect = container.getBoundingClientRect();
                 const buttonRect = noButton.getBoundingClientRect();
                 
-                // Calculate maximum positions while keeping button fully visible
-                const maxX = containerRect.width - buttonRect.width - 20; // 20px padding
+       
+                const maxX = containerRect.width - buttonRect.width - 20; 
                 const maxY = containerRect.height - buttonRect.height - 20;
                 
-                // Generate random positions within container
+              
                 const randomX = Math.floor(Math.random() * maxX);
                 const randomY = Math.floor(Math.random() * maxY);
-                
-                // Apply new position
+           
                 noButton.style.position = 'absolute';
                 noButton.style.left = randomX + 'px';
                 noButton.style.top = randomY + 'px';
             }
             
             yesButton.addEventListener('click', function() {
-                // Create celebration effect
+              
                 document.body.innerHTML = '';
                 document.body.style.background = 'linear-gradient(to right, #ff9a9e, #fad0c4)';
                 document.body.style.display = 'flex';
@@ -200,14 +199,14 @@
                 document.body.style.flexDirection = 'column';
                 
                 const message = document.createElement('h1');
-                message.textContent = 'You\'ve Made Me the Happiest Person!';
+                message.textContent = 'You\'ve Made Me the Happiest Person punturi!';
                 message.style.color = '#ff6b6b';
                 message.style.textAlign = 'center';
                 message.style.fontSize = '2.5rem';
                 message.style.padding = '20px';
                 
                 const subMessage = document.createElement('p');
-                subMessage.textContent = 'I love you with all my heart! 💖';
+                subMessage.textContent = 'I love you with all my heart badarni! 💖';
                 subMessage.style.color = '#555';
                 subMessage.style.fontSize = '1.5rem';
                 subMessage.style.marginTop = '20px';
@@ -215,7 +214,7 @@
                 document.body.appendChild(message);
                 document.body.appendChild(subMessage);
                 
-                // Create lots of hearts for celebration
+       
                 for (let i = 0; i < 50; i++) {
                     createHeart();
                 }
