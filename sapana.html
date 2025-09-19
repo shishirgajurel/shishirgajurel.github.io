@@ -26,6 +26,7 @@
       padding:30px 16px;
       display:flex;
       justify-content:center;
+      min-height:100vh;
     }
     .wrap{max-width:var(--maxwidth);width:100%}
     h1{
@@ -46,6 +47,8 @@
       padding:20px;
       box-shadow:0 6px 20px rgba(0,0,0,.4);
       transition:transform .2s ease;
+      position:relative;
+      overflow:hidden;
     }
     .card:hover{transform:translateY(-4px)}
     .qnum{
@@ -68,15 +71,77 @@
       cursor:pointer;
       border:none;
       transition:transform .15s ease,box-shadow .15s ease;
+      position:relative;
     }
     .btn:hover{transform:translateY(-2px)}
     .yes{background:var(--yes);color:white;box-shadow:0 4px 12px rgba(255,107,159,.25)}
-    .no{background:var(--no);color:#0f1724;box-shadow:0 4px 12px rgba(123,233,199,.25)}
+    .no{background:var(--no);color:#0f1724;box-shadow:0 4px 12px rgba(123,233,199,.25);position:relative;}
     footer{
       text-align:center;
       margin-top:28px;
       font-size:13px;
       color:var(--muted);
+    }
+    
+    /* Hearts animation */
+    .heart {
+      position: absolute;
+      pointer-events: none;
+      animation: float 4s ease-in forwards;
+      opacity: 0.8;
+      font-size: 20px;
+      color: var(--yes);
+      z-index: 100;
+    }
+    
+    @keyframes float {
+      0% {
+        transform: translateY(0) scale(0.5);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      90% {
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(-100px) scale(1.2);
+        opacity: 0;
+      }
+    }
+    
+    /* Response message */
+    .response {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(17, 24, 39, 0.95);
+      padding: 20px;
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      z-index: 1000;
+      text-align: center;
+      max-width: 300px;
+      display: none;
+      border: 2px solid var(--yes);
+    }
+    
+    .response p {
+      margin: 0 0 15px;
+      font-size: 18px;
+      color: #fff;
+    }
+    
+    .response button {
+      background: var(--yes);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -91,7 +156,7 @@
       <div class="card"><div class="qnum">4</div><div class="qtext">Would you dance with me under the stars?</div><div class="options"><button class="btn yes">Yes</button><button class="btn no">No</button></div></div>
       <div class="card"><div class="qnum">5</div><div class="qtext">Do you believe we are soulmates?</div><div class="options"><button class="btn yes">Yes</button><button class="btn no">No</button></div></div>
       <div class="card"><div class="qnum">6</div><div class="qtext">Would you kiss me in the rain?</div><div class="options"><button class="btn yes">Yes</button><button class="btn no">No</button></div></div>
-      <div class="card"><div class="qnum">7</div><div class="qtext">Do you miss me when I’m not around?</div><div class="options"><button class="btn yes">Yes</button><button class="btn no">No</button></div></div>
+      <div class="card"><div class="qnum">7</div><div class="qtext">Do you miss me when I'm not around?</div><div class="options"><button class="btn yes">Yes</button><button class="btn no">No</button></div></div>
       <div class="card"><div class="qnum">8</div><div class="qtext">Would you travel the world with me?</div><div class="options"><button class="btn yes">Yes</button><button class="btn no">No</button></div></div>
       <div class="card"><div class="qnum">9</div><div class="qtext">Do you feel safe with me?</div><div class="options"><button class="btn yes">Yes</button><button class="btn no">No</button></div></div>
       <div class="card"><div class="qnum">10</div><div class="qtext">Would you call me yours forever?</div><div class="options"><button class="btn yes">Yes</button><button class="btn no">No</button></div></div>
@@ -109,5 +174,130 @@
 
     <footer>Made with ❤️ for Punturi</footer>
   </div>
+  
+  <div class="response" id="response">
+    <p id="response-text"></p>
+    <button id="close-response">OK</button>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Romantic responses for yes buttons
+      const romanticResponses = [
+        "I love you more than words can express! ❤️",
+        "You make my heart skip a beat every time! 💓",
+        "I miss you every second we're apart! 💕",
+        "You're the most beautiful thing in my life! 🌹",
+        "My heart belongs to you forever! 💘",
+        "I fall more in love with you every day! 💖",
+        "You're my dream come true! 🌟",
+        "I can't imagine my life without you! 💞",
+        "You're the reason I believe in love! 💗",
+        "My love for you grows stronger every day! 💝",
+        "You're the sunshine in my life! ☀️",
+        "I cherish every moment with you! 💑",
+        "You complete me in every way! 💏",
+        "I'm forever grateful for you! 🙏",
+        "You're my happily ever after! 💒",
+        "My heart beats only for you! 💓",
+        "You're the answer to all my prayers! 🌠",
+        "I'm addicted to your love! 💊",
+        "You're my favorite thought! 💭",
+        "I'm yours forever and always! 💍"
+      ];
+      
+      // Get all yes and no buttons
+      const yesButtons = document.querySelectorAll('.yes');
+      const noButtons = document.querySelectorAll('.no');
+      const responseEl = document.getElementById('response');
+      const responseText = document.getElementById('response-text');
+      const closeResponse = document.getElementById('close-response');
+      
+      // Add event listeners to yes buttons
+      yesButtons.forEach((button, index) => {
+        button.addEventListener('click', function() {
+          // Show a romantic response
+          responseText.textContent = romanticResponses[index % romanticResponses.length];
+          responseEl.style.display = 'block';
+          
+          // Create hearts animation
+          createHearts(10);
+        });
+      });
+      
+      // Add event listeners to no buttons
+      noButtons.forEach(button => {
+        // Add mouseenter event to move button on hover
+        button.addEventListener('mouseenter', function(e) {
+          moveButton(e.target);
+        });
+        
+        // Add touchstart event for mobile devices
+        button.addEventListener('touchstart', function(e) {
+          e.preventDefault();
+          moveButton(e.target);
+        });
+        
+        // Add click event as fallback
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          moveButton(e.target);
+        });
+      });
+      
+      // Close response dialog
+      closeResponse.addEventListener('click', function() {
+        responseEl.style.display = 'none';
+      });
+      
+      // Function to move a button to a random position
+      function moveButton(button) {
+        // Get the card containing the button
+        const card = button.closest('.card');
+        const cardRect = card.getBoundingClientRect();
+        
+        // Calculate maximum positions within the card
+        const maxX = cardRect.width - button.offsetWidth - 20;
+        const maxY = cardRect.height - button.offsetHeight - 10;
+        
+        // Generate random positions
+        const randomX = Math.floor(Math.random() * maxX);
+        const randomY = Math.floor(Math.random() * maxY);
+        
+        // Set the new position
+        button.style.position = 'absolute';
+        button.style.left = randomX + 'px';
+        button.style.top = randomY + 'px';
+        
+        // Create a heart animation
+        createHearts(3);
+      }
+      
+      // Function to create floating hearts
+      function createHearts(count) {
+        for (let i = 0; i < count; i++) {
+          const heart = document.createElement('div');
+          heart.classList.add('heart');
+          heart.innerHTML = '❤';
+          
+          // Random position
+          const startX = Math.random() * window.innerWidth;
+          heart.style.left = startX + 'px';
+          heart.style.bottom = '0px';
+          
+          // Random size and speed
+          const size = 10 + Math.random() * 20;
+          heart.style.fontSize = size + 'px';
+          
+          document.body.appendChild(heart);
+          
+          // Remove heart after animation completes
+          setTimeout(() => {
+            heart.remove();
+          }, 4000);
+        }
+      }
+    });
+  </script>
 </body>
 </html>
