@@ -1,1 +1,0 @@
-Shishir Gajurel
